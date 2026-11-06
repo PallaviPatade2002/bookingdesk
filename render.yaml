@@ -1,0 +1,24 @@
+# Free demo hosting. The free plan has no persistent disk, so registered businesses reset on restart.
+# For real customers use a paid plan with a disk (set DB_FILE to a path on it) or your own server.
+services:
+  - type: web
+    name: bookingdesk
+    runtime: node
+    plan: free
+    buildCommand: cd frontend && npm install --include=dev && npm run build && cd ../backend && npm install
+    startCommand: cd backend && node src/server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: TZ
+        value: Asia/Kolkata
+      - key: AUTO_SEED
+        value: "1"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PLATFORM_PHONE
+        sync: false
+      - key: PLATFORM_PASSWORD
+        sync: false
