@@ -237,7 +237,7 @@ function Book({ onBooked, onEnquiry }) {
             {!isQuote && !isDay && <div><dt>{t('Duration')}</dt><dd>{svc ? dur(svc.duration_min) : '—'}</dd></div>}
             <div><dt>{isQuote ? t('Price') : t('Total')}</dt><dd className="price">{!svc ? '—' : isQuote ? t('Quote on request') : <>{coupon && <span className="strike">{money(svc.price)}</span>}{money(price)}</>}</dd></div>
           </dl>
-          {svc?.ask_venue && (
+          {!!svc?.ask_venue && (
             <div className="stack" style={{ gap: 8 }}>
               <div><label>{t('Venue / address *')}</label><input value={venue} onChange={(e) => setVenue(e.target.value)} placeholder={t('Where should we come?')} maxLength={200} /></div>
               <div><label>{t('Number of guests (optional)')}</label><input type="number" min="1" value={guests} onChange={(e) => setGuests(e.target.value)} /></div>

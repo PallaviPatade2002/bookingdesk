@@ -82,10 +82,10 @@ export default function Explore() {
                 <div className="biz-main">
                   <div className="row between"><b>{b.name}</b>{b.distance_km != null && <span className="badge">{b.distance_km} km</span>}</div>
                   <div className="muted small">{typeLabel(b.type)}</div>
-                  <div className="small">{[b.address, b.city].filter(Boolean).join(', ') || 'Address not added yet'}</div>
+                  <div className="small">{[b.address, b.city && !(b.address || '').toLowerCase().includes(b.city.toLowerCase()) ? b.city : ''].filter(Boolean).join(', ') || 'Address not added yet'}</div>
                   <div className="row small" style={{ gap: 10, marginTop: 4 }}>
                     {b.rating ? <span><Stars value={b.rating} size={14} /> {b.rating} ({b.rating_count})</span> : <span className="muted">New</span>}
-                    {b.from_price != null && <span className="muted">From {money(b.from_price)}</span>}
+                    {b.from_price != null && <span className="muted">{b.from_price === 0 ? 'Free to try' : `From ${money(b.from_price)}`}</span>}
                   </div>
                 </div>
               </a>

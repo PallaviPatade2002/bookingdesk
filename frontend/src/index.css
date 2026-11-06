@@ -473,3 +473,17 @@ td { padding: 14px; border-top: 1px solid var(--line); vertical-align: middle; }
 .lang-pick { width: auto; padding: 6px 10px; border-radius: 999px; font-size: .85rem; font-weight: 600; cursor: pointer; background: #fff; }
 .lang-pick.light { background: rgba(255,255,255,.15); color: #fff; border-color: rgba(255,255,255,.35); }
 .lang-pick.light option { color: #222; }
+
+/* ---------- polish found in screenshots ---------- */
+.brand { white-space: nowrap; flex-shrink: 0; }
+.brand-name { white-space: nowrap; }
+.topbar-inner { max-width: 1240px; }
+.nav { gap: 2px; min-width: 0; }
+.nav button { padding: 8px 11px; font-size: .94rem; }
+
+.cal-axis span { white-space: nowrap; }
+@media (max-width: 520px) {
+  .lp-nav-in .btn.ghost { display: none; }
+  .lp-nav-in { gap: 8px; }
+  .lang-pick { max-width: 104px; }
+}

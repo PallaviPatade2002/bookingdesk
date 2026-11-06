@@ -4,6 +4,9 @@ import { api } from '../api'
 import { Modal, money, nice, useLabel, useSettings, waLink } from '../ui'
 
 const r2 = (n) => Math.round(n * 100) / 100
+const METHOD_NAME = { cash: 'cash', upi: 'UPI', card: 'card', package: 'package' }
+// "FC Road, Pune" + "Pune" should not read "FC Road, Pune, Pune"
+const place = (address, city) => [address, city && !(address || '').toLowerCase().includes(city.toLowerCase()) ? city : ''].filter(Boolean).join(', ')
 const num = (v) => (Number(v) > 0 ? Number(v) : 0)
 let keySeed = 1
 
@@ -78,7 +81,7 @@ export function InvoiceView({ id, onClose, onChanged, toast, admin }) {
     <Modal title={`Bill ${inv.label}`} onClose={onClose}>
       <div className="invoice-sheet">
         <div className="inv-head">
-          <div><b className="inv-name">{b.name}</b>{(b.address || b.city) && <div className="small">{[b.address, b.city].filter(Boolean).join(', ')}</div>}{b.phone && <div className="small">Phone {b.phone}</div>}{b.gst_number && <div className="small">GSTIN {b.gst_number}</div>}</div>
+          <div><b className="inv-name">{b.name}</b>{(b.address || b.city) && <div className="small">{place(b.address, b.city)}</div>}{b.phone && <div className="small">Phone {b.phone}</div>}{b.gst_number && <div className="small">GSTIN {b.gst_number}</div>}</div>
           <div className="inv-meta"><b>{inv.label}</b><div className="small">{nice(when)}</div></div>
         </div>
         <div className="small" style={{ margin: '12px 0' }}>Billed to <b>{inv.customer.name}</b> · {inv.customer.phone}</div>
@@ -96,7 +99,7 @@ export function InvoiceView({ id, onClose, onChanged, toast, admin }) {
           {inv.tax > 0 && <div><span>GST {inv.tax_percent}%</span><b>{money(inv.tax)}</b></div>}
           {inv.tip > 0 && <div><span>Tip</span><b>{money(inv.tip)}</b></div>}
           <div className="inv-total"><span>Total</span><b>{money(inv.total)}</b></div>
-          {inv.payments.map((p, i) => <div key={i} className="small"><span>Paid by {p.method}</span><b>{money(p.amount)}</b></div>)}
+          {inv.payments.map((p, i) => <div key={i} className="small"><span>Paid by {METHOD_NAME[p.method] || p.method}</span><b>{money(p.amount)}</b></div>)}
           <div className={inv.due > 0 ? 'inv-due' : 'inv-paid'}><span>{inv.due > 0 ? 'Balance due' : 'Paid in full'}</span><b>{inv.due > 0 ? money(inv.due) : '✓'}</b></div>
         </div>
         {b.footer && <p className="small muted" style={{ marginTop: 14, textAlign: 'center' }}>{b.footer}</p>}

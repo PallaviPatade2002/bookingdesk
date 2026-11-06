@@ -179,7 +179,7 @@ function Report({ toast }) {
       <div className="page-head row between wrap">
         <div><h1>Monthly report</h1><p className="muted">How the parlour is doing.</p></div>
         <div className="row wrap">
-          <input type="month" value={month} onChange={(e) => e.target.value && setMonth(e.target.value)} style={{ width: 170 }} />
+          <input type="month" value={month} onChange={(e) => e.target.value && setMonth(e.target.value)} style={{ width: 210 }} />
           <button className="btn ghost" onClick={() => download(`/admin/export?month=${month}`, `bookings-${month}.csv`).catch((e) => toast(e.message))}>Download CSV</button>
         </div>
       </div>

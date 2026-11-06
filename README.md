@@ -13,7 +13,31 @@
 
 On the login page, "Try the demo" signs you in with one click. The demo runs on free hosting: the first load can take 30-60 seconds, and demo data resets when the server restarts.
 
-> Screenshots: add them to `docs/` and link them here.
+## Screenshots
+
+| Platform home | Find a business (map) |
+| --- | --- |
+| ![Platform home](docs/01-platform-home.png) | ![Explore with map](docs/02-explore-map.png) |
+
+| A business page (parlour) | Customer booking |
+| --- | --- |
+| ![Business landing](docs/03-business-landing.png) | ![Customer booking](docs/04-customer-booking.png) |
+
+| Owner dashboard | Calendar |
+| --- | --- |
+| ![Owner dashboard](docs/05-owner-dashboard.png) | ![Calendar](docs/06-calendar.png) |
+
+| Bill with UPI QR | Report and commission |
+| --- | --- |
+| ![Bill with UPI QR](docs/07-bill-upi-qr.png) | ![Report](docs/08-report-commission.png) |
+
+| Team and commission | Photographer page (full-day services) |
+| --- | --- |
+| ![Team](docs/09-team-commission.png) | ![Photographer](docs/12-photographer-landing.png) |
+
+| Mobile: landing | Mobile: booking |
+| --- | --- |
+| ![Mobile landing](docs/10-mobile-landing.png) | ![Mobile booking](docs/11-mobile-booking.png) |
 
 ## Why I built it
 

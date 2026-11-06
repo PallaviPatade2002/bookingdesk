@@ -32,7 +32,7 @@ export default function CalendarView({ date, rows, onSelect }) {
 
   return (
     <div className="card cal-wrap">
-      <div className="cal" style={{ gridTemplateColumns: `56px repeat(${cols.length}, minmax(130px, 1fr))` }}>
+      <div className="cal" style={{ gridTemplateColumns: `66px repeat(${cols.length}, minmax(130px, 1fr))` }}>
         <div className="cal-corner" />
         {cols.map((c) => <div key={c} className="cal-head">{c}</div>)}
         <div className="cal-axis" style={{ height: hoursList.length * PX }}>

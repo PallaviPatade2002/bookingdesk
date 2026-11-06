@@ -49,7 +49,7 @@ export function BrandName() {
   const { settings } = useSettings()
   const words = (settings.name || "").trim().split(" ")
   const last = words.length > 1 ? words.pop() : null
-  return <>{words.join(" ")}{last && <> <em style={{ color: "var(--primary)" }}>{last}</em></>}</>
+  return <span className="brand-name">{words.join(' ')}{last && <> <em style={{ color: 'var(--primary)' }}>{last}</em></>}</span>
 }
 
 export function TopBar({ user, tabs, tab, setTab, onLogout, showLang }) {
