@@ -1,62 +1,58 @@
-# BookingDesk: multi-business appointment booking
+# BookingDesk
 
-A hosted booking platform. **Any business (salon, clinic, gym, studio...) can register itself** and gets its own booking page, owner dashboard and private data. Customers book online; the owner manages everything. The platform owner sees and controls all businesses from one panel.
+**A multi-business appointment booking platform.** Any business (salon, clinic, gym, photographer, tuition class...) registers itself and gets its own booking page, owner dashboard, billing and private data. Customers find businesses on a map and book online.
 
-The included demo business is **Blush & Bloom**, a beauty parlour (photos from Unsplash).
+**Live demo:** https://bookingdesk.onrender.com  
+**Demo business:** https://bookingdesk.onrender.com/b/blush-bloom
 
-Stack: React (Vite) web app (installable as a phone app), Node/Express + SQLite API, JWT auth.
-
-## How it is organised
-
-| Address | What |
-| --- | --- |
-| `/` | Product home page: features, "Create your business", live demo |
-| `/explore` | **Customers find businesses:** search by name or city, filter by type, "Near me" (nearest first), list and map |
-| `/signup` | A business owner registers: name, type, web address, owner login |
-| `/b/<business>` | That business: public page, customer app, owner app (owner logs in here) |
-| `/platform` | Platform admin: list of all businesses, totals, suspend / activate |
-
-Every business has its own users, services, staff, bookings, settings, offers and reviews. A login (token) works only inside the business it was created for. This is enforced on the server and covered by tests.
-
-## Two ways to run the same code
-
-| | **Platform mode** (default) | **Single-business mode** |
+| Role | Phone | Password |
 | --- | --- | --- |
-| Setting | nothing | `SINGLE_BUSINESS=<slug>` (for example `blush-bloom`) |
-| `/` | Product home page, sign-up, explore, platform admin | That one business: its landing page, customer app and owner login |
-| Other businesses, sign-up, directory | available | switched off (404) |
-| Use for | a platform where many businesses register | a ready product for one parlour / clinic / gym, under its own domain |
+| Owner | `9000000001` | `123456` |
+| Customer | `9000000003` | `123456` |
+| Team member | `9000000021` | `123456` |
 
-Both modes use one codebase, so a fix or feature reaches both. Each business picks its own **brand colour and heading font** in Settings (a whole palette is derived from one colour, and kept readable); the platform pages use a neutral colour. Phone-app icons and manifests follow the same colour.
+On the login page, "Try the demo" signs you in with one click. The demo runs on free hosting: the first load can take 30-60 seconds, and demo data resets when the server restarts.
 
-## Features
+> Screenshots: add them to `docs/` and link them here.
 
-**For a business owner**
-- Self-service sign-up with starter services for the business type (beauty, clinic, fitness, other); everything is editable
-- Home dashboard: today, month income, 14-day chart, popular services, income per team member, customer rating
-- Share card with the booking link (copy / WhatsApp) and a get-started checklist
-- Calendar view (one column per team member) and list view; click an appointment for details, status actions and a one-tap WhatsApp reminder
-- Add appointments for walk-in / phone customers
-- Services (add, edit, hide, delete, category, photo), team members (services they do, weekly days off)
-- Customers (history, total spent, private notes, temporary password reset), offers (percentage coupons)
-- Location: city, address and a **map pin** (find address on map, use current location, click or drag the pin); choose whether to appear in the public directory
-- Settings: name, tagline, phone, WhatsApp, **what you call your team** (Stylist, Doctor, Trainer...), cancellation window
-- Opening hours and holidays, monthly report, CSV download, notification bell
+## Why I built it
+
+Small businesses in India still take bookings on phone calls and in paper diaries. Existing apps are English-only, complex or expensive for a small parlour. BookingDesk is one platform where an owner signs up in two minutes, shares a link on WhatsApp, and gets a calendar, bills and a customer list.
+
+## What it does
+
+**For the business owner**
+- Self-service sign-up with starter services for the type of business (beauty, clinic, fitness, photographer, events, tuition, home services, pet care, professional)
+- Dashboard: today, income, 14-day chart, popular services, income per team member, ratings
+- Calendar view (one column per team member), walk-in bookings, one-tap WhatsApp reminders
+- **Billing:** bills with GST, discount and tip; print / save as PDF; **UPI QR code**; part payments; customer account (khata) showing what each customer owes
+- **Packages / memberships** (for example "Facial x5"), **products with stock**, low-stock alerts
+- **Team logins with commission:** a team member sees only their own schedule and earnings
+- Services priced by **time slot, full day, or quote request** (decoration, wedding shoots), with venue and guest count
+- Marketing: campaigns to groups (inactive, birthday, top customers), coupons, message outbox
+- Gallery, location with a map pin, brand colour and font, cancellation policy, CSV export, calendar link for Google / Apple calendar
 
 **For customers**
-- **Find a business** at `/explore`: search by name or city, filter by type, sort by distance ("Near me"), see results on a map (OpenStreetMap, no API key)
-- Public page with services, team, reviews, opening hours, directions and FAQ
-- Sign up, pick a service, a team member (or "any") and a live free slot; coupon codes
-- Confirmation with add-to-calendar (.ics) and WhatsApp share; reschedule, cancel, rate a visit
-- Each business is installable as its own phone app (PWA) with its own name
+- Find businesses at `/explore`: search by name or city, filter by type, **"Near me"**, list and map (OpenStreetMap)
+- Pick a service, a team member (or "any") and a live free slot; coupons; reschedule, cancel, rate a visit
+- See bills and remaining package sessions; forgot password with a one-time code
+- Each business installs as its own phone app (PWA)
 
-**Rules enforced on the server**
-- No double booking per team member (a service with nobody attached behaves as one shared resource)
-- "Any" assigns the team member with the lightest day; no past times; closed days, holidays and days off have no slots
-- Customers can only cancel or move their own bookings, up to the owner's cancellation window
-- Services and team members with booking history are hidden instead of deleted
-- Prices are stored per booking, so coupons and later price changes never rewrite old income
-- Tenant isolation, login and sign-up rate limits, input validation, security headers
+**For the platform operator**
+- Platform admin panel: all businesses, totals, suspend / activate
+- **Single-business mode:** set `SINGLE_BUSINESS=<slug>` and the same code serves one business at `/` under its own domain
+
+## Engineering highlights
+
+- **Multi-tenancy:** every table is scoped by `business_id`; a login token only works inside the business that issued it. Covered by isolation tests (another business's token, service or booking id never works).
+- **No double booking:** availability is computed per team member from opening hours, holidays, days off and existing bookings; the check and insert run in one synchronous step.
+- **Money correctness:** prices are stored per booking and per bill, so coupons and later price changes never rewrite history. Checkout is a transaction: if any line fails (for example not enough stock) nothing is saved. Packages cover the GST on their service.
+- **Security basics:** bcrypt + JWT, role checks (customer / team / owner / platform), rate limits on login and sign-up, input validation, secret calendar links, one-time codes stored hashed with attempt limits, CSV formula-injection guard.
+- **Messaging without lock-in:** reminders, campaigns and codes go to an outbox and are posted to any provider through a webhook (`MESSAGE_WEBHOOK_URL`). Without a provider they are recorded as "test mode", never silently dropped.
+- **Theming:** one brand colour produces a whole palette whose contrast is kept readable (checked against WCAG 4.5:1).
+- **Tests:** 33 automated API tests (`cd backend && npm test`), plus a UI smoke test that renders every screen for each kind of user.
+
+**Stack:** React 19 + Vite, Node 22, Express 5, SQLite (`node:sqlite`), JWT, Leaflet / OpenStreetMap, `qrcode`.
 
 ## Run locally
 
@@ -65,50 +61,50 @@ cd backend && npm install && npm run seed && npm start   # http://localhost:5001
 cd frontend && npm install && npm run dev                # http://localhost:5174 (proxies /api)
 ```
 
-`cd frontend && npm run build` makes the backend serve the website too (one server, one address).
+`cd frontend && npm run build` makes the backend serve the website too (one server, one address). Platform admin at `/platform`: `9999999999 / 123456` (development only).
 
-Demo logins (password `123456`) at `/b/blush-bloom`: customer `9000000003`, owner `9000000001`. Platform admin at `/platform`: `9999999999` (development only). Tests: `cd backend && npm test`.
+## Addresses
 
-> Upgrading from the earlier single-business version: the database layout changed. Delete `backend/booking.db` and run `npm run seed` again.
+| Address | What |
+| --- | --- |
+| `/` | Product home page |
+| `/explore` | Find a business: search, near me, map |
+| `/signup` | A business owner registers |
+| `/b/<business>` | That business: public page, customer app, owner and team apps |
+| `/platform` | Platform admin |
 
 ## Settings (environment variables)
 
 | Variable | Meaning |
 | --- | --- |
 | `JWT_SECRET` | **Required in production.** Long random string that signs logins |
-| `PLATFORM_PHONE`, `PLATFORM_PASSWORD` | Login for the platform admin panel (`/platform`), created by `npm run seed` |
+| `PLATFORM_PHONE`, `PLATFORM_PASSWORD` | Login for `/platform`, created by `npm run seed` |
 | `DB_FILE` | Where the SQLite database lives, for example `/var/data/booking.db` |
-| `SINGLE_BUSINESS` | Optional. Slug of the one business to serve at `/` (see above). Create it first, for example with `npm run seed` or sign-up on a platform instance |
-| `PORT` | Port to listen on (default 5001) |
-| `AUTO_SEED=1` | Re-creates the demo business on every start. Use on free hosting that resets its disk |
-| `TZ` | Time zone of your customers, for example `Asia/Kolkata`. **Set this on the server**, otherwise "today" and slot times follow the server clock (often UTC) |
-| `NODE_ENV=production` | Turns off the development demo logins |
+| `SINGLE_BUSINESS` | Optional. Serve only this business (slug) at `/` |
+| `MESSAGE_WEBHOOK_URL`, `MESSAGE_WEBHOOK_TOKEN` | Optional. Where reminders and codes are posted to be sent by WhatsApp / SMS |
+| `TZ` | Time zone of the customers, for example `Asia/Kolkata`. Set it on the server |
+| `AUTO_SEED=1` | Re-creates the demo businesses on every start (free hosting that resets its disk) |
+| `NODE_ENV=production` | Turns off development demo logins and fake code display |
+| `PORT` | Port (default 5001) |
 
 ## Hosting
 
-**Now (free, demo only): Render.** New > Blueprint > pick the repo (`render.yaml`). The free plan sleeps when idle (first load 30-60 s) and **its disk resets on restart, so registered businesses are lost**. Use it only to show the demo; `AUTO_SEED=1` brings the demo business back after each restart.
+**Demo (free): Render.** New > Blueprint > pick the repo (`render.yaml`). The free plan sleeps when idle and its disk resets on restart, so registered businesses are lost. Use it for the demo only.
 
-**Real customers: your own server (VPS) or a paid plan with a persistent disk.** Businesses and bookings are stored in one SQLite file, so the disk must survive restarts.
+**Real customers: a VPS or a paid plan with a persistent disk.** All data is one SQLite file, so the disk must survive restarts.
 
-1. A small Linux VPS (1 GB RAM is enough to start) with Node 22 and a domain name pointing to it.
-2. Get the code on the server, then:
-   ```bash
-   cd frontend && npm ci && npm run build
-   cd ../backend && npm ci
-   ```
-3. Run it with a process manager, for example systemd or pm2, with:
-   `NODE_ENV=production TZ=Asia/Kolkata JWT_SECRET=<long random> PLATFORM_PHONE=<yours> PLATFORM_PASSWORD=<strong> DB_FILE=/var/data/booking.db PORT=5001`
-   then `npm run seed` once (creates the platform admin) and `node src/server.js`.
-4. Put Caddy or Nginx in front for HTTPS (needed for the phone-app install). Caddy example: `yourdomain.com { reverse_proxy localhost:5001 }`.
-5. **Back up `/var/data/booking.db` every day** (copy it somewhere else). That file is all your customers' data.
+1. Linux server with Node 22 and a domain name.
+2. `cd frontend && npm ci && npm run build` then `cd ../backend && npm ci`.
+3. Run with a process manager (systemd or pm2) and the variables above, then `npm run seed` once and `node src/server.js`.
+4. Put Caddy or Nginx in front for HTTPS (needed to install the phone app).
+5. **Back up the database file every day.**
 
-## Not included yet
+## Honest limits
 
-Self-service password reset by SMS/email (the owner issues a temporary password), online payment (needs a payment provider account), automatic WhatsApp/SMS sending (needs a provider; reminders are one-tap links today), image upload (photos are chosen from a gallery or pasted as links), PostgreSQL (SQLite is fine for a small number of businesses), subscription billing for businesses, custom domain per business, Flutter app for this version.
-
-## Notes on maps
-
-Maps and address search use OpenStreetMap tiles and Nominatim, which are free for light use. For heavy traffic use a map provider with a key (MapTiler, Mapbox, Google) or host your own tiles.
+- Reminders, campaigns and password-reset codes are **recorded, not delivered**, until a WhatsApp / SMS provider is connected through the webhook. Online card payment is not included; UPI is shown as a QR code and the owner marks it received.
+- Marathi and Hindi: the language switcher and text lookup are built, but the translation files are still empty, so screens show English.
+- SQLite suits a small number of businesses; move to PostgreSQL for scale. Photos are chosen from a gallery or pasted as links (no upload storage yet). No subscription billing or custom domain per business yet.
+- Maps and address search use free OpenStreetMap services, fine for light use.
 
 ## Credits
 
